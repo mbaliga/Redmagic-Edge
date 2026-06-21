@@ -55,10 +55,29 @@ cat > "$PROFILE_SNIP" <<'EOF'
 export DISPLAY=:0
 export PULSE_SERVER=127.0.0.1
 export LANG=en_US.UTF-8
+# Software GL — proot has no GPU driver; without this the XFCE compositor
+# falls back to llvmpipe and stalls (Termux:X11 "isn't responding" / freezes).
+export LIBGL_ALWAYS_SOFTWARE=1
+export GALLIUM_DRIVER=llvmpipe
 export XDG_RUNTIME_DIR="${XDG_RUNTIME_DIR:-/tmp/runtime-$(id -u)}"
 mkdir -p "$XDG_RUNTIME_DIR" 2>/dev/null || true
 chmod 700 "$XDG_RUNTIME_DIR" 2>/dev/null || true
 EOF
+
+say "Disabling the XFCE window-manager compositor (no GPU in proot)"
+# With software rendering, compositing causes freezes/ANRs. Turn it off by
+# pre-writing the xfwm4 config so it's off from the very first session.
+XFWM_DIR="$USER_HOME/.config/xfce4/xfconf/xfce-perchannel-xml"
+mkdir -p "$XFWM_DIR"
+cat > "$XFWM_DIR/xfwm4.xml" <<'XML'
+<?xml version="1.0" encoding="UTF-8"?>
+<channel name="xfwm4" version="1.0">
+  <property name="general" type="empty">
+    <property name="use_compositing" type="bool" value="false"/>
+  </property>
+</channel>
+XML
+chown -R "$USERNAME:$USERNAME" "$USER_HOME/.config"
 # Source it from .bashrc so interactive shells inside the desktop also get it.
 if ! grep -q '.desktop-env.sh' "$USER_HOME/.bashrc" 2>/dev/null; then
   echo '[ -f "$HOME/.desktop-env.sh" ] && . "$HOME/.desktop-env.sh"' >> "$USER_HOME/.bashrc"

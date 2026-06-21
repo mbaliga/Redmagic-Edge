@@ -53,6 +53,10 @@ say "Entering $DISTRO as $USERNAME and launching xfce4-session"
 proot-distro login "$DISTRO" --user "$USERNAME" --shared-tmp -- bash -lc "
   export DISPLAY=$DISP
   export PULSE_SERVER=127.0.0.1
+  # Force CPU/software GL. Inside proot there's no GPU driver, so the XFCE
+  # compositor would fall back to llvmpipe and stall (Android ANR / freezes).
+  export LIBGL_ALWAYS_SOFTWARE=1
+  export GALLIUM_DRIVER=llvmpipe
   [ -f \"\$HOME/.desktop-env.sh\" ] && . \"\$HOME/.desktop-env.sh\"
   export DISPLAY=$DISP   # re-assert after sourcing
   dbus-launch --exit-with-session xfce4-session
