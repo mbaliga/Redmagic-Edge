@@ -1,0 +1,90 @@
+#!/usr/bin/env bash
+#
+# Runs INSIDE the Debian proot guest (as root). Invoked by 10-install-debian.sh.
+# Covers:
+#   Task 2 — apt upgrade, locale, non-root user
+#   Task 3 — XFCE + core apps (terminal, Thunar, browser)
+#   Task 5 — PULSE_SERVER wiring for the daily user
+#   Task 6 — Node 18+ and Claude Code
+#
+# Idempotent: safe to re-run.
+#
+set -euo pipefail
+
+USERNAME="${USERNAME:-redmagic}"
+export DEBIAN_FRONTEND=noninteractive
+
+say() { printf '\n\033[1;32m[guest] ==> %s\033[0m\n' "$*"; }
+
+# --- Task 2: base, locale, user ----------------------------------------------
+say "apt update && upgrade"
+apt-get update
+apt-get -y upgrade
+
+say "Base tooling (sudo, locales, dbus, ca-certificates, curl)"
+apt-get install -y sudo locales dbus-x11 ca-certificates curl wget nano
+
+say "Generating en_US.UTF-8 locale"
+sed -i 's/^# *en_US.UTF-8 UTF-8/en_US.UTF-8 UTF-8/' /etc/locale.gen
+locale-gen
+update-locale LANG=en_US.UTF-8
+
+say "Creating non-root user: $USERNAME"
+if ! id -u "$USERNAME" >/dev/null 2>&1; then
+  useradd -m -s /bin/bash "$USERNAME"
+  # No interactive passwd in proot; lock a default and grant passwordless sudo.
+  echo "$USERNAME:$USERNAME" | chpasswd
+fi
+usermod -aG sudo "$USERNAME"
+echo "$USERNAME ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers.d/"$USERNAME"
+chmod 0440 /etc/sudoers.d/"$USERNAME"
+
+# --- Task 3: XFCE + core apps ------------------------------------------------
+say "Installing XFCE desktop + apps (this is the big download)"
+apt-get install -y \
+  xfce4 xfce4-terminal xfce4-goodies \
+  dbus-x11 x11-apps \
+  firefox-esr
+
+# --- Task 5: audio env for the daily user ------------------------------------
+say "Wiring PULSE_SERVER + DISPLAY for $USERNAME"
+USER_HOME="/home/$USERNAME"
+PROFILE_SNIP="$USER_HOME/.desktop-env.sh"
+cat > "$PROFILE_SNIP" <<'EOF'
+# Sourced by start-desktop.sh and ~/.bashrc — desktop session environment.
+export DISPLAY=:0
+export PULSE_SERVER=127.0.0.1
+export LANG=en_US.UTF-8
+export XDG_RUNTIME_DIR="${XDG_RUNTIME_DIR:-/tmp/runtime-$(id -u)}"
+mkdir -p "$XDG_RUNTIME_DIR" 2>/dev/null || true
+chmod 700 "$XDG_RUNTIME_DIR" 2>/dev/null || true
+EOF
+# Source it from .bashrc so interactive shells inside the desktop also get it.
+if ! grep -q '.desktop-env.sh' "$USER_HOME/.bashrc" 2>/dev/null; then
+  echo '[ -f "$HOME/.desktop-env.sh" ] && . "$HOME/.desktop-env.sh"' >> "$USER_HOME/.bashrc"
+fi
+chown "$USERNAME:$USERNAME" "$PROFILE_SNIP"
+
+# --- Task 6: Node 18+ and Claude Code ----------------------------------------
+say "Installing Node.js 20 (NodeSource) — apt's default is too old for Claude Code"
+if ! command -v node >/dev/null 2>&1 || [ "$(node -p 'process.versions.node.split(".")[0]' 2>/dev/null || echo 0)" -lt 18 ]; then
+  curl -fsSL https://deb.nodesource.com/setup_20.x | bash -
+  apt-get install -y nodejs
+fi
+node --version || true
+
+say "Installing @anthropic-ai/claude-code globally"
+npm install -g @anthropic-ai/claude-code
+command -v claude >/dev/null && echo "  claude: $(command -v claude)"
+
+say "Cleaning apt caches"
+apt-get clean
+
+cat <<NOTE
+
+[guest] ----------------------------------------------------------------
+Provisioning done.
+  Task 3 done-when: packages above installed cleanly.
+  Task 6 done-when: 'claude' resolves -> run it in the XFCE terminal later.
+[guest] ----------------------------------------------------------------
+NOTE
