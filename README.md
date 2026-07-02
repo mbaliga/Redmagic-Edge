@@ -1,5 +1,8 @@
 # Redmagic-Edge — Mobile Desktop, Phase 1
 
+> **Constellation** · `state: parked` · private · [registry: `Personal-Tracker/CONSTELLATION.md`](https://github.com/mbaliga/Personal-Tracker/blob/main/CONSTELLATION.md)
+> No-root XFCE Linux desktop on a RedMagic phone via Termux + proot-distro + Termux:X11.
+
 A **no-root** Linux desktop (XFCE) running inside **Termux** on a **RedMagic 11 Pro**,
 rendered through **Termux:X11**, driving an external monitor over USB-C DP-Alt.
 This is Phase 1 of a layered "DeX-like" setup.
@@ -74,3 +77,8 @@ These scripts were authored and reviewed against the current Termux / `termux-x1
 executed in the cloud build container** that produced this branch. Run them on
 the phone and use `docs/RUNBOOK.md` to confirm each task's done-when check.
 Sources consulted are linked in `docs/TROUBLESHOOTING.md`.
+
+## Do not touch
+
+- The working **`start-desktop.sh` runbook flow** — freeze fixes (no compositing / software GL) prevent proot freezes; don't regress them.
+- **No root** — pure userspace (Termux + proot-distro + Termux:X11); Play Integrity must stay intact.
