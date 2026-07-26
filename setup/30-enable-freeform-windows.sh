@@ -40,11 +40,19 @@ cat <<NOTE
 Done when: reboot the phone, plug into the monitor, and try dragging an
 ordinary Android app (not Termux:X11) into a resizable floating window.
 
-  Works    -> real freeform windows are live. Next step (not yet
-              automated by this repo -- untested combination): sideload
-              the "Taskbar" app (github.com/farmerbb/Taskbar or F-Droid)
-              for an actual taskbar/app-drawer over those windows on the
-              external display. See docs/PHASE2-EXPLORATION.md.
+  Works    -> real freeform windows are live. Next steps (not yet
+              automated by this repo -- untested combinations):
+                1. Set up Shizuku (github.com/RikkaApps/Shizuku) -- a
+                   no-root privilege bridge confirmed safe for Play
+                   Integrity, confirmed to unlock real window-management
+                   APIs beyond these flags.
+                2. Sideload "Smart Dock" (github.com/axel358/smartdock,
+                   F-Droid) for genuine Shizuku-backed freeform
+                   resize/snap/close, or "Taskbar"
+                   (github.com/farmerbb/Taskbar, F-Droid) for a taskbar/
+                   app-drawer UI.
+              See docs/PHASE2-EXPLORATION.md for what each actually does
+              and where the no-root ceiling is.
   Doesn't  -> RedMagic's Android skin may be blocking it even with these
               flags set -- its own desktop-mode implementation has
               reported similar bugs elsewhere. Not a dead end, just

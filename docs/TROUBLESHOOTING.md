@@ -43,14 +43,15 @@
   emulation. Use a physical mouse (ideally on the extended display), or adjust
   the input/mouse mode in Termux:X11 Preferences.
 
-## Trackpad/keyboard combo devices (generic — no confirmed "Clackpad")
-- We couldn't find a real product literally named "Clackpad" (searched RedMagic's
-  own store, Amazon, AliExpress, Kickstarter, XDA — nothing matched). Rather than
-  guess a spec, `debian-provision.sh` installs a generic, self-detecting tuner
+## Trackpad/keyboard combo devices (generic, physical HID hardware)
+- `debian-provision.sh` installs a generic, self-detecting tuner
   (`~/bin/tune-pointer-input.sh`, runs at every session start) that turns on
   tap-to-click / natural scrolling / disable-while-typing for **whatever** real
   pointer device is plugged in, if it exposes libinput properties. Works for any
-  actual HID trackpad, whatever it's branded.
+  actual HID trackpad, whatever it's branded — useful if you ever attach a
+  physical keyboard+trackpad combo. (This is unrelated to Clackpad, which turned
+  out to be a software IME, not hardware — see the dedicated Clackpad section
+  below.)
 - To check what your device reports once it's connected and the desktop is up:
   `DISPLAY=:0 xinput list`, then `DISPLAY=:0 xinput list-props <id>` for the
   trackpad's id.
@@ -144,9 +145,43 @@
 - RedMagic's Android skin may block this even with the flags set — its own
   desktop-mode implementation has reported similar bugs elsewhere. Not a
   guaranteed win; see `docs/PHASE2-EXPLORATION.md` for the full picture and the
-  next step (the "Taskbar" app) if it does work.
+  next steps (Shizuku, then Smart Dock or Taskbar) if it does work.
 - Fully reversible: rerun with each value set to `0` (or `false` for the
   boolean-looking ones) to revert.
+
+## Shizuku (no-root privilege bridge)
+- Confirmed safe for Play Integrity — runs as the ordinary ADB `shell` UID,
+  never root, never touches verified boot. See `docs/PHASE2-EXPLORATION.md`
+  for the full source-verified breakdown.
+- **Doesn't survive a reboot without root** — Shizuku's own docs say the
+  service must be restarted via ADB after every boot. Don't assume it's still
+  running after the phone restarts; check the Shizuku app before relying on
+  it. An in-app "start on boot" toggle exists but isn't fully verified as
+  reliable on this device — test it rather than trust it.
+- Needed by: Clackpad's system-wide-pointer trackpad mode, Smart Dock's real
+  freeform window resize/snap/close, and Taskbar's simplified setup flow.
+
+## Clackpad (custom IME) inside the XFCE desktop
+- Clackpad is the project owner's own Android IME (on-screen keyboard app,
+  not yet on the Play Store) — not a hardware product. Its trackpad moves the
+  text cursor / arrow-key-style navigation without Shizuku, or a real
+  system-wide pointer with Shizuku enabled.
+- Termux:X11 is confirmed (source-level) to use Android's real system IME
+  framework — no hardcoded keyboard, no allow-list — so Clackpad should be
+  selectable and usable inside the desktop like any other IME. Untested in
+  practice by anyone as of this writing.
+- Caveat: Termux:X11 can't expose real text-field content to any IME (it has
+  no way to read inside an X11 window), so it feeds a fake placeholder
+  instead. This can affect IME features that depend on real surrounding text,
+  even though basic typing and directional cursor moves should be fine.
+- The Shizuku-powered pointer mode should, in principle, be able to move the
+  cursor inside the XFCE desktop too — Termux:X11's rendering surface is a
+  normal touchable Android View, and Shizuku's `INJECT_EVENTS` grant is the
+  same system-wide input-injection primitive an existing real app
+  (`android-desktop-touchpad`) already uses for exactly this purpose. Not
+  confirmed in practice for this specific combination.
+- See `docs/PHASE2-EXPLORATION.md` for the fast on-device tests to confirm
+  each piece.
 
 ## No root — if a step seems to need it
 - Stop. There is a userspace path for everything in this phase (proot-distro is
@@ -167,4 +202,8 @@
 - Termux:Widget — <https://github.com/termux/termux-widget>
 - Termux:API `termux-notification` — <https://github.com/termux/termux-api-package>
 - Taskbar (no-root freeform windows) — <https://github.com/farmerbb/Taskbar>
+- Smart Dock (Shizuku-backed freeform window management) — <https://github.com/axel358/smartdock>
+- Shizuku (no-root privilege bridge) — <https://github.com/RikkaApps/Shizuku>
+- android-desktop-touchpad (Shizuku input injection example) — <https://github.com/prespic/android-desktop-touchpad>
+- AOSP shell UID permissions (INJECT_EVENTS, MANAGE_ACTIVITY_TASKS) — <https://android.googlesource.com/platform/frameworks/base/+/master/packages/Shell/AndroidManifest.xml>
 - mekhontsev/magicdesk (root-based comparison) — <https://github.com/mekhontsev/magicdesk>
