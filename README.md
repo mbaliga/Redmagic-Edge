@@ -31,13 +31,17 @@ This is Phase 1 of a layered "DeX-like" setup.
 
 | Path | Task(s) | Run where |
 |------|---------|-----------|
-| `setup/00-termux-base.sh`    | 1       | Termux |
-| `setup/10-install-debian.sh` | 2,3,5,6 | Termux (calls the provisioner) |
-| `setup/debian-provision.sh`  | 2,3,5,6 | inside Debian (auto-invoked) |
-| `start-desktop.sh`           | 4,5,7   | Termux |
-| `setup/audio-test.sh`        | 5       | inside Debian |
-| `docs/RUNBOOK.md`            | all     | step-by-step with done-when checks |
-| `docs/TROUBLESHOOTING.md`    | all     | gotchas & fixes |
+| `setup/00-termux-base.sh`    | 1        | Termux |
+| `setup/10-install-debian.sh` | 2,3,5,6  | Termux (calls the provisioner) |
+| `setup/debian-provision.sh`  | 2,3,5,6,8| inside Debian (auto-invoked) |
+| `start-desktop.sh`           | 4,5,7    | Termux |
+| `stop-desktop.sh`             | 4,8      | Termux |
+| `setup/audio-test.sh`        | 5        | inside Debian |
+| `setup/20-gui-launcher.sh`   | 8 (optional)     | Termux |
+| `setup/30-enable-freeform-windows.sh` | 9 (experimental) | Termux |
+| `docs/RUNBOOK.md`            | all      | step-by-step with done-when checks |
+| `docs/TROUBLESHOOTING.md`    | all      | gotchas & fixes |
+| `docs/PHASE2-EXPLORATION.md` | 9, wireless | honest write-up of what's proven vs. guessed |
 
 ## Quick start (on the phone, in Termux)
 
@@ -51,6 +55,11 @@ bash setup/10-install-debian.sh   # Tasks 2,3,5,6: Debian + XFCE + audio + Node 
 
 Then for **Task 7**: plug the DP-Alt hub (video + USB-A kb/mouse + PD-in), let
 Android mirror, and re-run `./start-desktop.sh`.
+
+```bash
+bash setup/20-gui-launcher.sh     # Task 8 (optional): tap-to-launch, no typing
+bash setup/30-enable-freeform-windows.sh  # Task 9 (experimental): Android apps in windows
+```
 
 Tunables via env vars: `DISTRO` (default `debian`), `USERNAME` (default
 `redmagic`), `DISP` (default `:0`).
@@ -67,6 +76,14 @@ screen can sleep while the desktop stays up.
 - No root / Magisk / LSPosed / bootloader unlock.
 - Not targeting the Dell (that's Phase 2: Moonlight/Remmina).
 - No native Android desktop mode (Phase 3).
+
+## Stretch goals (Phase 1.5, partly explored)
+
+Tasks 8-9 above and a wireless-monitor option go beyond the core Phase 1
+scope — a tap-to-launch GUI layer, and a no-root attempt at running native
+Android apps in resizable windows (what `mekhontsev/magicdesk` does, but that
+project requires root; we don't). See `docs/PHASE2-EXPLORATION.md` for an
+honest account of what's confirmed vs. still unverified on this exact device.
 
 ---
 

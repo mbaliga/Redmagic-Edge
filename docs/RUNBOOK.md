@@ -120,3 +120,51 @@ sleep** while the desktop stays up.
 
 > Tip: keep Termux alive across screen-off by acquiring a wakelock — Termux
 > notification → "Acquire wakelock", or run `termux-wake-lock`.
+
+---
+
+## Task 8 (optional) — GUI launcher + panel polish
+
+`debian-provision.sh` (Task 2/3, re-run is safe/idempotent) now also wires up:
+- A Whisker Menu + pinned taskbar (Terminal, Files, Firefox, Claude Code) in
+  XFCE — already installed by `xfce4-goodies`, just switched on.
+- `Super+space` opens the menu; `Super+arrows` snap/maximize windows;
+  `Super+d` shows the desktop.
+- A generic trackpad/mouse auto-tuner that turns on tap-to-click, natural
+  scrolling, and a faster pointer speed for whatever real pointer device is
+  connected (see `docs/TROUBLESHOOTING.md` if it doesn't pick up your device).
+
+Then, in Termux (Task 8's Termux half):
+
+```bash
+bash setup/20-gui-launcher.sh
+```
+
+Sets up Termux:Widget shortcuts and a Start/Stop notification so launching the
+desktop no longer requires opening Termux and typing a command.
+
+**Done when** — after installing the Termux:Widget and Termux:API companion
+APKs (F-Droid, same "APK is separate from the package" rule as Termux:X11):
+tapping a home-screen shortcut (or notification button) starts/stops the
+desktop, and the XFCE panel shows a working Start menu + taskbar on next boot.
+
+---
+
+## Task 9 (experimental) — no-root Android apps in windows
+
+```bash
+bash setup/30-enable-freeform-windows.sh
+```
+
+Flips four reversible `adb shell settings put global ...` flags (same
+mechanism as the earlier phantom-process-killer fix) to try unlocking
+Android's built-in freeform multi-window support — a no-root path toward
+running native Android apps in resizable windows next to the XFCE desktop,
+the way `mekhontsev/magicdesk` does with root.
+
+**Done when** — after rebooting and plugging into the monitor, an ordinary
+Android app can be dragged into a resizable floating window. This is a
+go/no-go test, not guaranteed to work on RedMagic's Android skin — see
+`docs/PHASE2-EXPLORATION.md` for the full picture, the next step (the
+"Taskbar" app) if it passes, and the honest state of wireless monitor
+casting as a bonus path.
