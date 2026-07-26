@@ -1,15 +1,14 @@
 # Redmagic-Edge — Mobile Desktop, Phase 1
 
-> **Constellation** · `state: parked` · private · [registry: `Personal-Tracker/CONSTELLATION.md`](https://github.com/mbaliga/Personal-Tracker/blob/main/CONSTELLATION.md)
-> No-root XFCE Linux desktop on a RedMagic phone via Termux + proot-distro + Termux:X11.
+No-root XFCE Linux desktop on a RedMagic phone via Termux + proot-distro + Termux:X11.
 
 A **no-root** Linux desktop (XFCE) running inside **Termux** on a **RedMagic 11 Pro**,
 rendered through **Termux:X11**, driving an external monitor over USB-C DP-Alt.
 This is Phase 1 of a layered "DeX-like" setup.
 
-> **Where this runs:** ON THE PHONE'S TERMUX. Not on a PC, not on the Dell
-> homelab. These scripts are authored for `aarch64` Android/Termux and are meant
-> to be executed on the device.
+> **Where this runs:** ON THE PHONE'S TERMUX, not a PC. These scripts are
+> authored for `aarch64` Android/Termux and are meant to be executed on the
+> device.
 
 ## Hard constraints
 
@@ -74,7 +73,7 @@ screen can sleep while the desktop stays up.
 ## Out of scope this phase
 
 - No root / Magisk / LSPosed / bootloader unlock.
-- Not targeting the Dell (that's Phase 2: Moonlight/Remmina).
+- Not targeting a desktop/server machine (that's Phase 2: Moonlight/Remmina).
 - No native Android desktop mode (Phase 3).
 
 ## Stretch goals (Phase 1.5, partly explored)
@@ -95,7 +94,11 @@ executed in the cloud build container** that produced this branch. Run them on
 the phone and use `docs/RUNBOOK.md` to confirm each task's done-when check.
 Sources consulted are linked in `docs/TROUBLESHOOTING.md`.
 
-## Do not touch
+## Stability notes for contributors
 
-- The working **`start-desktop.sh` runbook flow** — freeze fixes (no compositing / software GL) prevent proot freezes; don't regress them.
-- **No root** — pure userspace (Termux + proot-distro + Termux:X11); Play Integrity must stay intact.
+- Don't regress the freeze fix in `start-desktop.sh`/`debian-provision.sh`
+  (disabled compositing + forced software GL) — without it, XFCE's compositor
+  falls back to `llvmpipe` and the desktop hangs/ANRs on proot. See
+  `docs/TROUBLESHOOTING.md`.
+- Don't reintroduce root/Magisk/LSPosed/bootloader-unlock anywhere — the whole
+  point of this project is that it doesn't need any of that.
