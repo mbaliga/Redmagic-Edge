@@ -1,7 +1,7 @@
 #!/data/data/com.termux/files/usr/bin/bash
 #
 # Task 1 — Termux base + X server
-# Run this INSIDE Termux on the phone (NOT inside Debian, NOT on the Dell).
+# Run this INSIDE Termux on the phone (NOT inside Debian, NOT on a PC).
 #
 # Brings Termux up to date and installs the X server + audio + proot tooling.
 # Idempotent: safe to re-run.
