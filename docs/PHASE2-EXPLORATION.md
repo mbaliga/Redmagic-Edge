@@ -242,11 +242,25 @@ anyone as far as research could find.
    terminal text field — confirm Clackpad's UI appears and typed
    characters land correctly.
 2. With no text field focused (blank desktop), try the trackpad gesture
-   with Shizuku *off* — should do nothing, confirming the non-Shizuku
-   mode is correctly scoped to text fields only.
+   with Shizuku *off* — should do nothing to the real pointer, confirming
+   the non-Shizuku mode is correctly scoped to focus-navigation, not
+   pointer control.
 3. Get Shizuku running (see the Shizuku section above), then repeat the
    trackpad gesture with no text field focused — if the pointer moves
    inside the XFCE desktop, the whole chain works end to end.
 
 No repo automation needed for any of this — it's testing an app (Clackpad)
 against another app (Termux:X11), both outside this repo's scripts.
+
+**Update — test 2 confirmed on-device (owner-verified, non-Shizuku mode):**
+a screen recording of Clackpad's trackpad on the blank XFCE desktop (no text
+field focused) shows exactly the predicted Architecture-1 behavior: the real
+XFCE/X11 mouse cursor never moves — pixel-identical position across the
+entire clip — while the trackpad gesture instead cycles focus between the
+desktop icons (Trash → Home → File System), i.e. real directional/arrow-key
+navigation reaching XFCE, not pointer control. This is a meaningful positive
+result on its own: it confirms the full chain (Clackpad → Android IME
+framework → Termux:X11 → real X11 KeyPress events → XFCE) works end to end
+in practice, not just in source-level theory. Remaining unconfirmed: typing
+into an actual focused text field (terminal/Firefox), and the Shizuku
+pointer-mode test (test 3 above).
