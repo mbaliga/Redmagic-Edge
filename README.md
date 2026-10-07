@@ -37,6 +37,7 @@ This is Phase 1 of a layered "DeX-like" setup.
 | `setup/audio-test.sh`        | 5       | inside Debian |
 | `docs/RUNBOOK.md`            | all     | step-by-step with done-when checks |
 | `docs/TROUBLESHOOTING.md`    | all     | gotchas & fixes |
+| `docs/PORTING_NOTE.md`       | none    | porting disposition: nothing to port; this setup is a Linux target host |
 
 ## Quick start (on the phone, in Termux)
 
