@@ -58,3 +58,39 @@ F10), run in the guest as `redmagic` into `$HOME`, no `sudo`, not Flatpak. Deliv
 
 ## 6. Sources read
 `README.md`, `STATE.md`, `start-desktop.sh`, `setup/*.sh`, `docs/*.md`, `.github/workflows/cleanup-artifacts.yml`; master §0-§4, §5 (this row), §6-§8.
+
+## Owner rulings and the proposed line (added 2026-10-07)
+
+Status: PLAN. Nothing here is built, run on a device, signed or submitted. The program-level plan is Personal-Tracker `PORTING_PROGRAM.md` (a private repo, PR #10), which holds the owner's rulings and section 5A, the proposed port / no-port line. The cells, estimates and open questions above are this repo's original plan and are unedited. Where the owner has since answered a question, the answer is below. Section 5A is a proposal; the owner has not yet confirmed it.
+
+### Where Redmagic-Edge sits in the proposed line (program section 5A.3, a proposal)
+
+| Target       | Verdict | Weeks and flags |
+| ------------ | ------- | --------------- |
+| Ubuntu Touch | no-port | -               |
+| Linux        | no-port | -               |
+| iOS/iPadOS   | no-port | -               |
+| macOS        | no-port | -               |
+| Windows      | no-port | -               |
+
+Key: `follows` means it ports only as far as the products that depend on it; `exists` means the program reads it as already running there, unverified (finish, verify and sign); flags: `g` gated on a prerequisite, `r` re-estimate or floor, `o` its own program, `s` scope note. The program's P4, P8, P12 and P13 gate whole columns or repos and are not flagged per cell. A port verdict counts the deliverable in the line; where this repo's plan calls a deliverable a reframe (program rule R12) it keeps that label. Tests cited in the reason: (a) the owner said it is needed there; (b) its job is really done on that OS by real users; (c) that OS is where it is sold or its audience is; it has no reason to exist if (x) its surface is absent or untouchable, (y) the capability is forbidden or impossible, or (z) the only form is a thin wrapper or a different product nobody asked for. P-numbers and OQ-numbers refer to the program plan (Personal-Tracker `PORTING_PROGRAM.md`, sections 5A.5 and 8).
+
+Reason: It is itself a Linux target host, not an app to port.
+
+### Owner rulings that apply here
+
+- **OQ-5 hardware (2026-10-06):** the ruling changed which of the owner's other machines are Linux device gates; which machine carries which gate, and whether the RedMagic under Termux:X11 is one, is not decided (OQ-33).
+- **OQ-22 key custody (2026-10-06):** "OS keystore, weaker fallback shown (Recommended)": where no keystore exists, a passphrase-protected file. The setup scripts configure no secret-service daemon and whether the guest has one is unknown (plan section 3), so a ported app here is at the file tier at worst, shown in its UI.
+
+### Prerequisites and open questions that touch this repo (program sections 5A.5 and 8)
+
+No program-level prerequisite is named for this repo.
+
+Owner questions in the program register that concern this repo (status as of 2026-10-07):
+
+- OQ-5 (ruled): Hardware stance
+- OQ-12 (open): Licences for repos without a LICENSE (plan item 4: no LICENSE here)
+- OQ-22 (ruled): Secret custody per platform
+- OQ-33 (open): Hardware details still open
+
+When the owner confirms or changes the line, this repo's original cells above stay as the engineering detail; only the verdicts and re-costs in program section 5A change.
