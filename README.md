@@ -85,3 +85,7 @@ Sources consulted are linked in `docs/TROUBLESHOOTING.md`.
   `docs/TROUBLESHOOTING.md`.
 - Don't reintroduce root/Magisk/LSPosed/bootloader-unlock anywhere — the whole
   point of this project is that it doesn't need any of that.
+
+## Licence
+
+Source-available, free for noncommercial use under the [PolyForm Noncommercial License 1.0.0](LICENSE). If you make money with it, you need a commercial licence: see [COMMERCIAL-LICENSE.md](COMMERCIAL-LICENSE.md).
